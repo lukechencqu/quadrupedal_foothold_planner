@@ -26,7 +26,7 @@ This software is built on the Robotic Operating System (ROS), which needs to be 
 In order to install the package, clone the latest version from this repository into your catkin workspace and compile the package using ROS.
 ```
 cd catkin_workspace/src
-git clone https://github.com/anybotics/elevation_mapping.git
+git clone https://github.com/lukechencqu/quadrupedal_foothold_planner.git
 cd ../
 catkin_make
 ```
@@ -101,4 +101,4 @@ footholds:
 ```
 ### Node: map_tf
 
-
+## Parameters
