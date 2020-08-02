@@ -56,6 +56,7 @@ The left front foothold search region.
 #### Services
 * plan_global_footholds (foothold_planner::GlobalFootholdPlan::Request)
 Call planning global footholds service. User can specify how many gait cycles of footholds to plan.<br>
+
 Request:
 ```
 rosservice call /foothold_planner/plan_global_footholds "gait_cycles: 8"
