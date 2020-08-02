@@ -1,6 +1,12 @@
 # quadrupedal_foothold_planner
 auto planning footholds of quadrupedal robots with user specified gait and gait cycles
 
+## Overview
+
+Author: Lu Chen<br>
+Affiliation: AIRS(CUHK-SZ)<br>
+Maintainer: chenlucqu@gmail.com<br>
+
 
 ## Installation
 ### Dependencies
