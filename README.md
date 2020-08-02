@@ -1,5 +1,5 @@
-# quadrupedal_foothold_planner
-auto planning footholds of quadrupedal robots with user specified gait and gait cycles
+# Quadrupedal Foothold Planner
+Auto planning footholds of quadrupedal robots with user specified gait and gait cycles
 
 ## Overview
 
@@ -11,7 +11,7 @@ Maintainer: chenlucqu@gmail.com<br>
 ## Installation
 ### Dependencies
 
-This software is built on the Robotic Operating System (ROS), which needs to be installed first. Additionally, the Robot-Centric Elevation Mapping depends on following software:
+This software is built on the Robotic Operating System (ROS), which needs to be installed first. Additionally, the Quadrupedal Foothold Planner depends on following software:
 
 * [Grid Map (grid map library for mobile robots)](https://github.com/anybotics/grid_map)<br>
 * [Elevation_Mapping (Robot-Centric Elevation Mapping),](https://github.com/ANYbotics/elevation_mapping#citing)<br>
@@ -39,23 +39,23 @@ catkin_make
 The planned global footholds.
 
 * global_footholds_marker ([visualization_msgs/Marker](http://docs.ros.org/api/visualization_msgs/html/msg/Marker.html))<br>
->The global footholds markers for RVIZ visualization.
+The global footholds markers for RVIZ visualization.
 
 * RF_search_polygon ([geometry_msgs/PolygonStamped](http://docs.ros.org/api/geometry_msgs/html/msg/PolygonStamped.html))<br>
->The right front foothold search region.
+The right front foothold search region.
 
 * RH_search_polygon ([geometry_msgs/PolygonStamped](http://docs.ros.org/api/geometry_msgs/html/msg/PolygonStamped.html))<br>
->The right hind foothold search region.
+The right hind foothold search region.
 
 * LH_search_polygon ([geometry_msgs/PolygonStamped](http://docs.ros.org/api/geometry_msgs/html/msg/PolygonStamped.html))<br>
->The left hind foothold search region.
+The left hind foothold search region.
 
 * LF_search_polygon ([geometry_msgs/PolygonStamped](http://docs.ros.org/api/geometry_msgs/html/msg/PolygonStamped.html))<br>
->The left front foothold search region.
+The left front foothold search region.
 
 #### Services
 * plan_global_footholds (foothold_planner::GlobalFootholdPlan::Request)
->Call planning global footholds service. User can specify how many gait cycles of footholds to plan.<br>
+Call planning global footholds service. User can specify how many gait cycles of footholds to plan.<br>
 Request:
 ```
 rosservice call /foothold_planner/plan_global_footholds "gait_cycles: 8"
