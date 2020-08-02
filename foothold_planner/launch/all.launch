@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+
+<launch>
+    <!-- load parameters -->
+
+    <!-- publish TF -->
+    <node name="map_tf" pkg="foothold_planner" type="map_tf" 
+        args = "odom false">
+    </node>
+
+    <!-- foothold planner -->
+    <node name="foothold_planner" pkg="foothold_planner" type="foothold_planner" output="screen" >
+        <rosparam command="load" file="$(find foothold_planner)/config/foothold_planner.yaml" />
+    </node>
+
+    <!-- elevation mapping -->
+    <include file="$(find elevation_mapping_demos)/launch/simple_demo.launch" />
+
+    <!-- traversability estimation -->
+    <include file="$(find traversability_estimation)/launch/traversability_estimation.launch" />
+
+    <!-- traversability visualization-->
+    <include file="$(find traversability_estimation)/launch/visualization.launch" />
+
+    <!-- record rosbag -->
+    <include file="$(find foothold_planner)/launch/record_globalfootholds.launch" />
+
+    <!-- RVIZ -->
+    <node name="default_rviz" pkg="rviz" type="rviz" />
+
+
+</launch>

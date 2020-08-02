@@ -1,0 +1,5 @@
+
+<launch>
+    <node pkg="rosbag" type="record" name="record_globalfootholds"
+        args="-o globalfootholds.bag /foothold_planner/global_footholds" />
+</launch>

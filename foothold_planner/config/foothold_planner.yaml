@@ -1,0 +1,35 @@
+
+################### 注意事项 ##############################
+# 1、tm地图的frame保持与em地图相同
+# 2、em建图需要位置坐标，注意是否发布了满足格式要求的位置
+# 3、em建图如果是在全局坐标系下，那么需要确认是否有全局坐标系，如果没有的话则需要人工实现发布
+# 4、多开发者合作时，注意tm地图和em地图配置文件的更新
+# 5、注意根据实际需要决定em地图使用非融合地图（动态局部情况适用）还是融合地图（非动态全局情况适用）
+########################################################
+
+debug: true
+checkDefaultFoothold_Debug: true
+
+footRadius: 0.03
+defaultFootholdThreshold: 0.7
+candidateFootholdThreshold: 0.7
+gaitCycleNum: 2
+searchRadius: 0.1
+stepLength: 0.2
+
+RF_defaultBiasX: 0.3
+RF_defaultBiasY: -0.2
+RH_defaultBiasX: -0.3
+RH_defaultBiasY: -0.2
+LH_defaultBiasX: -0.3
+LH_defaultBiasY: 0.2
+LF_defaultBiasX: 0.3
+LF_defaultBiasY: 0.2
+
+laikago_kinematics:
+  length: 0.4387
+  width: 0.175
+  l1: 0.037
+  l2: 0.25
+  l3: 0.25
+  skewLength: 0.1
