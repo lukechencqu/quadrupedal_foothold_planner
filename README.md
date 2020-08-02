@@ -7,8 +7,8 @@ auto planning footholds of quadrupedal robots with user specified gait and gait 
 
 This software is built on the Robotic Operating System (ROS), which needs to be installed first. Additionally, the Robot-Centric Elevation Mapping depends on following software:
 
-    * [Grid Map (grid map library for mobile robots)](https://github.com/anybotics/grid_map)
-    kindr (kinematics and dynamics library for robotics),
-    kindr_ros (ROS wrapper for kindr),
-    Point Cloud Library (PCL) (point cloud processing),
-    Eigen (linear algebra library).
+* [Grid Map (grid map library for mobile robots)](https://github.com/anybotics/grid_map)
+kindr (kinematics and dynamics library for robotics),
+kindr_ros (ROS wrapper for kindr),
+Point Cloud Library (PCL) (point cloud processing),
+Eigen (linear algebra library).
