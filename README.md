@@ -2,7 +2,7 @@
 auto planning footholds of quadrupedal robots with user specified gait and gait cycles
 
 
-Installation
+# Installation
 Dependencies
 
 This software is built on the Robotic Operating System (ROS), which needs to be installed first. Additionally, the Robot-Centric Elevation Mapping depends on following software:
