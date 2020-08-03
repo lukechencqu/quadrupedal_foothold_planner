@@ -9,7 +9,7 @@ Maintainer: chenlucqu@gmail.com<br>
 
 
 ## Mapping pipleline
-![](https://github.com/lukechencqu/quadrupedal_foothold_planner/blob/master/materials/mapping.jpg)
+![image](https://github.com/lukechencqu/quadrupedal_foothold_planner/blob/master/materials/mapping.jpg)
 
 ## Foothold planning pipleline
 Support planning the footholds of many kinds of gaits, such as walk and trot.
