@@ -8,6 +8,14 @@ Affiliation: AIRS(CUHK-SZ)<br>
 Maintainer: chenlucqu@gmail.com<br>
 
 
+## Mapping pipleline
+
+## Foothold planning pipleline
+Support planning the footholds of many kinds of gaits, such as walk and trot.
+
+
+
+
 ## Installation
 ### Dependencies
 
