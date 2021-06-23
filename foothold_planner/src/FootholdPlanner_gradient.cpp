@@ -56,8 +56,23 @@ double nloptFunc(const std::vector<double> &x, std::vector<double> &grad, void *
     // https://nlopt.readthedocs.io/en/latest/NLopt_Tutorial/#example-in-cc
 
     ++count_;
- 
+
     return (
+            w1*( wr*(pow(x[0]-nominalIndex[0] ,2.0)) + wc*(pow(x[1]-nominalIndex[1] ,2.0)) + 
+                 wr*(pow(x[2]-nominalIndex[2] ,2.0)) + wc*(pow(x[3]-nominalIndex[3] ,2.0)) +
+                 wr*(pow(x[4]-nominalIndex[4] ,2.0)) + wc*(pow(x[5]-nominalIndex[5] ,2.0)) +
+                 wr*(pow(x[6]-nominalIndex[6] ,2.0)) + wc*(pow(x[7]-nominalIndex[7] ,2.0)) ) +
+            w2*( wr*(pow(x[0]-centroidIndex[0] ,2.0)) + wc*(pow(x[1]-centroidIndex[1] ,2.0)) + 
+                 wr*(pow(x[2]-centroidIndex[2] ,2.0)) + wc*(pow(x[3]-centroidIndex[3] ,2.0)) +
+                 wr*(pow(x[4]-centroidIndex[4] ,2.0)) + wc*(pow(x[5]-centroidIndex[5] ,2.0)) +
+                 wr*(pow(x[6]-centroidIndex[6] ,2.0)) + wc*(pow(x[7]-centroidIndex[7] ,2.0)) ) +  
+            w3*( pow((x[0]-x[2]) - lengthBase/mapResolution ,2.0) +
+                 pow((x[4]-x[6]) - lengthBase/mapResolution ,2.0) ) +     
+            w4*( pow(abs(0.5*(x[0]-x[2]) - 0.5*(x[4]-x[6])) - 2*skew/mapResolution ,2.0) +
+                 pow(abs(0.5*(x[4]-x[6]) - 0.5*(lfCurrentRow - rhCurrentRow)) - 2*skew/mapResolution ,2.0) )              
+            );      
+ 
+/*     return (
             w1*( wr*(abs(x[0]-nominalIndex[0])) + wc*(abs(x[1]-nominalIndex[1])) + 
                  wr*(abs(x[2]-nominalIndex[2])) + wc*(abs(x[3]-nominalIndex[3])) +
                  wr*(abs(x[4]-nominalIndex[4])) + wc*(abs(x[5]-nominalIndex[5])) +
@@ -70,21 +85,7 @@ double nloptFunc(const std::vector<double> &x, std::vector<double> &grad, void *
                  abs(abs(x[4]-x[6]) - lengthBase/mapResolution) ) +     
             w4*( abs(abs(0.5*abs(x[0]-x[2]) - 0.5*abs(x[4]-x[6])) - 2*skew/mapResolution) +
                  abs(abs(0.5*abs(x[4]-x[6]) - 0.5*abs(lfCurrentRow - rhCurrentRow)) - 2*skew/mapResolution) )              
-            );  
-
-    // return (
-    //         w1*( wr*(abs(x[0]-nominalIndex[0])) + wc*(abs(x[1]-nominalIndex[1])) + 
-    //              wr*(abs(x[2]-nominalIndex[2])) + wc*(abs(x[3]-nominalIndex[3])) +
-    //              wr*(abs(x[4]-nominalIndex[4])) + wc*(abs(x[5]-nominalIndex[5])) +
-    //              wr*(abs(x[6]-nominalIndex[6])) + wc*(abs(x[7]-nominalIndex[7])) ) +
-    //         w2*( wr*(abs(x[0]-centroidIndex[0])) + wc*(abs(x[1]-centroidIndex[1])) + 
-    //              wr*(abs(x[2]-centroidIndex[2])) + wc*(abs(x[3]-centroidIndex[3])) +
-    //              wr*(abs(x[4]-centroidIndex[4])) + wc*(abs(x[5]-centroidIndex[5])) +
-    //              wr*(abs(x[6]-centroidIndex[6])) + wc*(abs(x[7]-centroidIndex[7])) ) +  
-    //         w3*( abs(abs(x[0]-x[2]) - lengthBase/mapResolution) +
-    //              abs(abs(x[4]-x[6]) - lengthBase/mapResolution) ) +     
-    //         w4*( abs(abs(0.5*abs(x[0]-x[2]) - 0.5*abs(x[4]-x[6])) - 2*skew/mapResolution) )              
-    //         );       
+            );   */     
 }
 
 /* NLopt inequality constraints */
@@ -102,49 +103,49 @@ double nloptConstraint1(const std::vector<double> &x, std::vector<double> &grad,
 
     // return ((a*x[0] + b) * (a*x[0] + b) * (a*x[0] + b) - x[1]);
 
-    return ( t1 - abs(x[0] - x[2]) );
+    return ( t1 - (x[0] - x[2]) );
 }
 
 // (LF, RH)对脚hip间距约束上限
 double nloptConstraint2(const std::vector<double> &x, std::vector<double> &grad, void *data)
 {
-    return ( abs(x[0] - x[2]) - t2 );
+    return ( (x[0] - x[2]) - t2 );
 }
 
 // (RF, LH)对脚hip间距约束下限
 double nloptConstraint3(const std::vector<double> &x, std::vector<double> &grad, void *data)
 {
-    return ( t1 - abs(x[4] - x[6]) );
+    return ( t1 - (x[4] - x[6]) );
 }
 
 // (RF, LH)对脚hip间距约束上限
 double nloptConstraint4(const std::vector<double> &x, std::vector<double> &grad, void *data)
 {
-    return ( abs(x[4] - x[6]) - t2 );
+    return ( (x[4] - x[6]) - t2 );
 }
 
 // 一次对脚迈步的cog移动距离约束下限
 double nloptConstraint5(const std::vector<double> &x, std::vector<double> &grad, void *data)
 {
-    return ( t3 - 0.5*abs( abs(x[0] - x[2]) - abs(x[4] - x[6]) ) );
+    return ( t3 - 0.5*abs( (x[0] - x[2]) - (x[4] - x[6]) ) );
 }
 
 // 一次对脚迈步的cog移动距离约束上限
 double nloptConstraint6(const std::vector<double> &x, std::vector<double> &grad, void *data)
 {
-    return ( 0.5*abs( abs(x[0] - x[2]) - abs(x[4] - x[6]) ) - t4 );
+    return ( 0.5*abs( (x[0] - x[2]) - (x[4] - x[6]) ) - t4 );
 }
 
 // 一次对脚迈步的cog移动距离约束下限
 double nloptConstraint7(const std::vector<double> &x, std::vector<double> &grad, void *data)
 {
-    return ( t3 - 0.5*abs( abs(x[4] - x[6]) - abs(lfCurrentRow - rhCurrentRow) ) );
+    return ( t3 - 0.5*abs( (x[4] - x[6]) - (lfCurrentRow - rhCurrentRow) ) );
 }
 
 // 一次对脚迈步的cog移动距离约束上限
 double nloptConstraint8(const std::vector<double> &x, std::vector<double> &grad, void *data)
 {
-    return ( 0.5*abs( abs(x[4] - x[6]) - abs(lfCurrentRow - rhCurrentRow) ) - t4 );
+    return ( 0.5*abs( (x[4] - x[6]) - (lfCurrentRow - rhCurrentRow) ) - t4 );
 }
 
 
@@ -289,7 +290,10 @@ bool FootholdPlanner::readParameters(){
     node_.param("laikago_kinematics/l3", laikagoKinematics_.l3, float(0.25));
     node_.param("laikago_kinematics/skewLength", isos_.skew, float(0.1));  
 
-    // robot initial standce position(map frame). 
+    // robot initial standce position(map frame).
+    // node_.param("initial_position/x", initialPose_.point.x, float(0.0));  
+    // node_.param("initial_position/y", initialPose_.point.y, float(0.0));  
+    // node_.param("initial_position/z", initialPose_.point.z, float(0.0));  
     node_.param("initial_position/x", initialPose_[0], double(0.0));  
     node_.param("initial_position/y", initialPose_[1], double(0.0));  
     node_.param("initial_position/z", initialPose_[2], double(0.0));  
@@ -378,7 +382,6 @@ bool FootholdPlanner::initialize(){
     LF_initialPosition_.point.z += initialPose_[2];
     // publishInitialFootholdMarkers(RF_initialPosition_, RH_initialPosition_, LH_initialPosition_, LF_initialPosition_, footRadius_*1, alpha_);
 
-    ajustedPose_[1] = 0.0; // 机器人横向修正值
 
     // 获取足端矩形搜索区域参数
     footSearchRect_.length = searchRadius_ * 2;
@@ -420,35 +423,94 @@ bool FootholdPlanner::initialize(){
         LF_defaultBias_.point.y = 0.5*laikagoKinematics_.widthBase;               
     }   
 
-    setCurrentFootholdsPosition(RF_FIRST_,
-                                initialPose_,
-                                RF_defaultCurrentPosition_, 
-                                RH_defaultCurrentPosition_, 
-                                LH_defaultCurrentPosition_, 
-                                LF_defaultCurrentPosition_);       
+    if(RF_FIRST_){
+        if(debug_) cout<<"RF and LH first move."<<endl;
+        RF_centroidCurrentPosition_.header.frame_id = RH_centroidCurrentPosition_.header.frame_id 
+                                                    = LH_centroidCurrentPosition_.header.frame_id 
+                                                    = LF_centroidCurrentPosition_.header.frame_id 
+                                                    = mapFrame_;
+        RF_centroidCurrentPosition_.point.x = laikagoKinematics_.lengthBase*0.5 + isos_.skew;
+        RF_centroidCurrentPosition_.point.y = -laikagoKinematics_.widthBase*0.5;
+        RF_centroidCurrentPosition_.point.z = 0;
 
-    setCurrentFootholdsPosition(RF_FIRST_,
-                                initialPose_,    
-                                RF_nominalCurrentPosition_, 
-                                RH_nominalCurrentPosition_, 
-                                LH_nominalCurrentPosition_, 
-                                LF_nominalCurrentPosition_);
+        RH_centroidCurrentPosition_.point.x = -laikagoKinematics_.lengthBase*0.5 - isos_.skew;
+        RH_centroidCurrentPosition_.point.y = -laikagoKinematics_.widthBase*0.5;
+        RH_centroidCurrentPosition_.point.z = 0;    
 
-    setCurrentFootholdsPosition(RF_FIRST_,
-                                initialPose_,    
-                                RF_centroidCurrentPosition_, 
-                                RH_centroidCurrentPosition_, 
-                                LH_centroidCurrentPosition_, 
-                                LF_centroidCurrentPosition_);
+        LH_centroidCurrentPosition_.point.x = -laikagoKinematics_.lengthBase*0.5 + isos_.skew;
+        LH_centroidCurrentPosition_.point.y = laikagoKinematics_.widthBase*0.5;
+        LH_centroidCurrentPosition_.point.z = 0;    
 
-    setCurrentFootholdsPosition(RF_FIRST_,
-                                initialPose_,    
-                                RF_optCurrentPosition_, 
-                                RH_optCurrentPosition_, 
-                                LH_optCurrentPosition_, 
-                                LF_optCurrentPosition_);  
-                                                                                           
-              
+        LF_centroidCurrentPosition_.point.x = laikagoKinematics_.lengthBase*0.5 - isos_.skew ;
+        LF_centroidCurrentPosition_.point.y = laikagoKinematics_.widthBase*0.5;
+        LF_centroidCurrentPosition_.point.z = 0;         
+
+        // -----------
+        RF_nominalCurrentPosition_.header.frame_id = RH_nominalCurrentPosition_.header.frame_id 
+                                                    = LH_nominalCurrentPosition_.header.frame_id 
+                                                    = LF_nominalCurrentPosition_.header.frame_id 
+                                                    = mapFrame_;
+        RF_nominalCurrentPosition_.point.x = laikagoKinematics_.lengthBase*0.5;
+        RF_nominalCurrentPosition_.point.y = -laikagoKinematics_.widthBase*0.5;
+        RF_nominalCurrentPosition_.point.z = 0;
+
+        RH_nominalCurrentPosition_.point.x = -laikagoKinematics_.lengthBase*0.5;
+        RH_nominalCurrentPosition_.point.y = -laikagoKinematics_.widthBase*0.5;
+        RH_nominalCurrentPosition_.point.z = 0;    
+
+        LH_nominalCurrentPosition_.point.x = -laikagoKinematics_.lengthBase*0.5;
+        LH_nominalCurrentPosition_.point.y = laikagoKinematics_.widthBase*0.5;
+        LH_nominalCurrentPosition_.point.z = 0;    
+
+        LF_nominalCurrentPosition_.point.x = laikagoKinematics_.lengthBase*0.5;
+        LF_nominalCurrentPosition_.point.y = laikagoKinematics_.widthBase*0.5;
+        LF_nominalCurrentPosition_.point.z = 0;           
+    }else{
+        if(debug_) cout<<"LF and RH first move."<<endl;
+        RF_centroidCurrentPosition_.header.frame_id = RH_centroidCurrentPosition_.header.frame_id 
+                                                    = LH_centroidCurrentPosition_.header.frame_id 
+                                                    = LF_centroidCurrentPosition_.header.frame_id 
+                                                    = mapFrame_;
+        RF_centroidCurrentPosition_.point.x = laikagoKinematics_.lengthBase*0.5 - isos_.skew;
+        RF_centroidCurrentPosition_.point.y = -laikagoKinematics_.widthBase*0.5;
+        RF_centroidCurrentPosition_.point.z = 0;
+
+        RH_centroidCurrentPosition_.point.x = -laikagoKinematics_.lengthBase*0.5 + isos_.skew;
+        RH_centroidCurrentPosition_.point.y = -laikagoKinematics_.widthBase*0.5;
+        RH_centroidCurrentPosition_.point.z = 0;    
+
+        LH_centroidCurrentPosition_.point.x = -laikagoKinematics_.lengthBase*0.5 - isos_.skew;
+        LH_centroidCurrentPosition_.point.y = laikagoKinematics_.widthBase*0.5;
+        LH_centroidCurrentPosition_.point.z = 0;    
+
+        LF_centroidCurrentPosition_.point.x = laikagoKinematics_.lengthBase*0.5 + isos_.skew ;
+        LF_centroidCurrentPosition_.point.y = laikagoKinematics_.widthBase*0.5;
+        LF_centroidCurrentPosition_.point.z = 0;   
+
+        // -----------
+        RF_nominalCurrentPosition_.header.frame_id = RH_nominalCurrentPosition_.header.frame_id 
+                                                    = LH_nominalCurrentPosition_.header.frame_id 
+                                                    = LF_nominalCurrentPosition_.header.frame_id 
+                                                    = mapFrame_;
+        RF_nominalCurrentPosition_.point.x = laikagoKinematics_.lengthBase*0.5;
+        RF_nominalCurrentPosition_.point.y = -laikagoKinematics_.widthBase*0.5;
+        RF_nominalCurrentPosition_.point.z = 0;
+
+        RH_nominalCurrentPosition_.point.x = -laikagoKinematics_.lengthBase*0.5;
+        RH_nominalCurrentPosition_.point.y = -laikagoKinematics_.widthBase*0.5;
+        RH_nominalCurrentPosition_.point.z = 0;    
+
+        LH_nominalCurrentPosition_.point.x = -laikagoKinematics_.lengthBase*0.5;
+        LH_nominalCurrentPosition_.point.y = laikagoKinematics_.widthBase*0.5;
+        LH_nominalCurrentPosition_.point.z = 0;    
+
+        LF_nominalCurrentPosition_.point.x = laikagoKinematics_.lengthBase*0.5;
+        LF_nominalCurrentPosition_.point.y = laikagoKinematics_.widthBase*0.5;
+        LF_nominalCurrentPosition_.point.z = 0;           
+    }
+
+
+
     // -----------
     RF_currentPosition_.header.frame_id = RH_currentPosition_.header.frame_id 
                                         = LH_currentPosition_.header.frame_id 
@@ -598,7 +660,6 @@ bool FootholdPlanner::globalFootholdPlan(   foothold_planner::GlobalFootholdPlan
     cout<<endl<<"Clearing variables memory space ......"<<endl<<endl;
     count_ = 0;
     // (1) 清空保存全局落脚点结果的容器，即该容器只允许记录本次全局落脚点规划请求的结果
-    globalFootholdsResult_.defaultFootholds.clear();
     globalFootholdsResult_.nominalFootholds.clear();
     globalFootholdsResult_.centroidFootholds.clear();
     globalFootholdsResult_.optFootholds.clear();
@@ -662,14 +723,6 @@ bool FootholdPlanner::globalFootholdPlan(   foothold_planner::GlobalFootholdPlan
 
     // 2、
     cout<<endl<<"Saving the initial standce footholds to global results as the first gait cycle ......"<<endl<<endl;
-    // 将初始位置落脚点作为第一组数据保存到全局落脚点中
-    Eigen::VectorXd defaultFootholds = Eigen::VectorXd(12);
-    defaultFootholds << RF_initialPosition_.point.x, RF_initialPosition_.point.y, RF_initialPosition_.point.z,
-                            RH_initialPosition_.point.x, RH_initialPosition_.point.y, RH_initialPosition_.point.z,
-                            LH_initialPosition_.point.x, LH_initialPosition_.point.y, LH_initialPosition_.point.z,
-                            LF_initialPosition_.point.x, LF_initialPosition_.point.y, LF_initialPosition_.point.z;
-    globalFootholdsResult_.defaultFootholds.push_back(defaultFootholds);  
-
     // 将初始位置落脚点作为第一组数据保存到全局落脚点中
     Eigen::VectorXd nominalFootholds = Eigen::VectorXd(12);
     nominalFootholds << RF_initialPosition_.point.x, RF_initialPosition_.point.y, RF_initialPosition_.point.z,
@@ -756,7 +809,7 @@ bool FootholdPlanner::globalFootholdPlan(   foothold_planner::GlobalFootholdPlan
     // 3、
     publishInitialFootholdMarkers(RF_initialPosition_, RH_initialPosition_, LH_initialPosition_, LF_initialPosition_, footRadius_*1, alpha_);
 
-    ajustedPose_[1] = 0.0; 
+    
     int count = 0; // 用于opt global footholds cylinder marker array显示，给每个落脚点标记不同的ID！（否则不能正确显示）
     //! 循环执行落脚点规划任务，直到达到设定的步态周期数
     for(int gaitCycleIndex = 0; gaitCycleIndex < gaitCycleNum_; ++gaitCycleIndex)
@@ -1340,13 +1393,6 @@ bool FootholdPlanner::globalFootholdPlan(   foothold_planner::GlobalFootholdPlan
             LH_defaultCurrentPosition_ = LH_defaultNextPosition_;
             LF_defaultCurrentPosition_ = LF_defaultNextPosition_;
 
-            // 保存全局落脚点到本地txt
-            defaultFootholds << RF_defaultNextPosition_.point.x, RF_defaultNextPosition_.point.y, RF_defaultNextPosition_.point.z,
-                                 RH_defaultNextPosition_.point.x, RH_defaultNextPosition_.point.y, RH_defaultNextPosition_.point.z,
-                                 LH_defaultNextPosition_.point.x, LH_defaultNextPosition_.point.y, LH_defaultNextPosition_.point.z,
-                                 LF_defaultNextPosition_.point.x, LF_defaultNextPosition_.point.y, LF_defaultNextPosition_.point.z;
-            globalFootholdsResult_.defaultFootholds.push_back(defaultFootholds);     
-
             //! 发布全局落脚点markders           
             publishGlobalFootholdPointMarkers(RF_defaultNextPosition_, RH_defaultNextPosition_, LH_defaultNextPosition_, LF_defaultNextPosition_, 
                                               footRadius_*0.5, alpha_);
@@ -1575,7 +1621,6 @@ bool FootholdPlanner::globalFootholdPlan(   foothold_planner::GlobalFootholdPlan
             // break; // 若本次步态周期规划失败，那么就停止后面其他步态的继续规划    
         }   
 
-        ajustedPose_[1] += -0.007; //累积修正机器人横向移动
     } // for, 所有步态周期规划结束
 
     // 保存全局落脚点到本地txt
@@ -2197,9 +2242,6 @@ bool FootholdPlanner::getFootholdSearchGridMap( geometry_msgs::PointStamped RF_p
     // 下一个步态周期的足端支撑面几何中心
     geometry_msgs::Point polygonCenterNext;
     polygonCenterNext.x = polygonCenter.x + stepLength_;
-    // polygonCenterNext.y = polygonCenter.y; // 下一步的中心由当前步的中心决定，落脚点可能为一条斜线
-    polygonCenterNext.y = initialPose_[1] + ajustedPose_[1]; // 横向不会发生偏移，落脚点为一条朝向正前方的直线 
-    polygonCenterNext.z = polygonCenter.z;
     if(debug2_) cout<<"Feet center in next gait-cyle: "<<endl<<polygonCenterNext<<endl;
 
 
@@ -2268,9 +2310,6 @@ bool FootholdPlanner::getDefaultFootholds( geometry_msgs::PointStamped RF_positi
     // 下一个步态周期的足端支撑面几何中心
     geometry_msgs::Point polygonCenterNext;
     polygonCenterNext.x = polygonCenter.x + stepLength_;
-    // polygonCenterNext.y = polygonCenter.y; // 下一步的中心由当前步的中心决定，落脚点可能为一条斜线
-    polygonCenterNext.y = initialPose_[1] + ajustedPose_[1]; // 横向不会发生偏移，落脚点为一条朝向正前方的直线  
-    polygonCenterNext.z = polygonCenter.z;    
     if(debug2_) cout<<"Feet center in next gait-cyle: "<<endl<<polygonCenterNext<<endl;
 
 
@@ -2328,9 +2367,6 @@ bool FootholdPlanner::getGaitCycleSearchGridMap( geometry_msgs::PointStamped RF_
     // 下一个步态周期的足端支撑面几何中心
     geometry_msgs::Point nextFeetCenter;
     nextFeetCenter.x = feetCenter.x + stepLength_;
-    // nextFeetCenter.y = feetCenter.y; // 下一步的中心由当前步的中心决定，落脚点可能为一条斜线
-    nextFeetCenter.y = initialPose_[1] + ajustedPose_[1]; // 横向不会发生偏移，落脚点为一条朝向正前方的直线
-    nextFeetCenter.z = feetCenter.z;
     if(debug2_) cout<<"Feet center in next gait-cyle: "<<endl<<nextFeetCenter<<endl;     
     grid_map::Position p; // gridmap原点(几何中心)
     p.x() = nextFeetCenter.x;
@@ -2621,59 +2657,6 @@ bool FootholdPlanner::getCogSpeed(geometry_msgs::PointStamped rfFootholdResult,
 
     return true;                  
 }   
-
-
-void FootholdPlanner::setCurrentFootholdsPosition(bool RF_FIRST,
-                            Eigen::Vector3d initialPose,
-                            geometry_msgs::PointStamped &RF_currentPosition,
-                            geometry_msgs::PointStamped &RH_currentPosition,
-                            geometry_msgs::PointStamped &LH_currentPosition,
-                            geometry_msgs::PointStamped &LF_currentPosition)
-{
-    if(RF_FIRST_){
-        if(debug_) cout<<"RF and LH first move."<<endl;
-        RF_currentPosition.header.frame_id = RH_currentPosition.header.frame_id 
-                                           = LH_currentPosition.header.frame_id 
-                                           = LF_currentPosition.header.frame_id 
-                                           = mapFrame_;
-        RF_currentPosition.point.x = laikagoKinematics_.lengthBase * 0.5 + isos_.skew + initialPose[0];
-        RF_currentPosition.point.y = -laikagoKinematics_.widthBase * 0.5 + initialPose[1];
-        RF_currentPosition.point.z = 0;
-
-        RH_currentPosition.point.x = -laikagoKinematics_.lengthBase * 0.5 - isos_.skew + initialPose[0];
-        RH_currentPosition.point.y = -laikagoKinematics_.widthBase * 0.5 + initialPose[1];
-        RH_currentPosition.point.z = 0;
-
-        LH_currentPosition.point.x = -laikagoKinematics_.lengthBase * 0.5 + isos_.skew + initialPose[0];
-        LH_currentPosition.point.y = laikagoKinematics_.widthBase * 0.5 + initialPose[1];
-        LH_currentPosition.point.z = 0;
-
-        LF_currentPosition.point.x = laikagoKinematics_.lengthBase * 0.5 - isos_.skew + initialPose[0];
-        LF_currentPosition.point.y = laikagoKinematics_.widthBase * 0.5 + initialPose[1];
-        LF_currentPosition.point.z = 0;
-    }else{
-        if(debug_) cout<<"LF and RH first move."<<endl;
-        RF_currentPosition.header.frame_id = RH_currentPosition.header.frame_id 
-                                                    = LH_currentPosition.header.frame_id 
-                                                    = LF_currentPosition.header.frame_id 
-                                                    = mapFrame_;
-        RF_currentPosition.point.x = laikagoKinematics_.lengthBase*0.5 - isos_.skew + initialPose[0];
-        RF_currentPosition.point.y = -laikagoKinematics_.widthBase*0.5 + initialPose[1];
-        RF_currentPosition.point.z = 0;
-
-        RH_currentPosition.point.x = -laikagoKinematics_.lengthBase*0.5 + isos_.skew + initialPose[0];
-        RH_currentPosition.point.y = -laikagoKinematics_.widthBase*0.5 + initialPose[1];
-        RH_currentPosition.point.z = 0;    
-
-        LH_currentPosition.point.x = -laikagoKinematics_.lengthBase*0.5 - isos_.skew + initialPose[0];
-        LH_currentPosition.point.y = laikagoKinematics_.widthBase*0.5 + initialPose[1];
-        LH_currentPosition.point.z = 0;    
-
-        LF_currentPosition.point.x = laikagoKinematics_.lengthBase*0.5 + isos_.skew  + initialPose[0];
-        LF_currentPosition.point.y = laikagoKinematics_.widthBase*0.5 + initialPose[1];
-        LF_currentPosition.point.z = 0;           
-    }
-}
 
 
 bool FootholdPlanner::setFirstGait( geometry_msgs::PointStamped RF_initialPosition, 
@@ -3094,52 +3077,11 @@ bool FootholdPlanner::saveLog()
     std::string username = getUserName();
 
 
+ 
+    /* 1、传统落脚点规划算法 ------------------------------------------------------------------ */
     std::string filePath;
     std::ofstream cogSpeedFile;    
-    std::ofstream feetDistanceFile;  
-
-    /* 、默认落脚点 ------------------------------------------------------------------ */
-     if(1)
-    {
-        // 1.1 全局落脚点
-        filePath = "/home/"+username+"/laika_ws/log/default_global_footholds_" + fileName;      
-        std::ofstream outFile0;    
-        outFile0.open(filePath, std::ios::app|std::ios::out);
-        outFile0<<std::fixed;
-        outFile0.precision(3);
-        if(outFile0.bad()){
-            cout<<"Cannot create file: "<<filePath<<endl;
-            return false;
-        }
-
-        for(int i=0; i<globalFootholdsResult_.defaultFootholds.size(); ++i){
-            outFile0
-            <<"{"
-            <<globalFootholdsResult_.defaultFootholds[i][0]<<"\t,"
-            <<globalFootholdsResult_.defaultFootholds[i][1]<<"\t,"
-            <<globalFootholdsResult_.defaultFootholds[i][2]<<"\t,"
-            <<globalFootholdsResult_.defaultFootholds[i][3]<<"\t,"
-            <<globalFootholdsResult_.defaultFootholds[i][4]<<"\t,"
-            <<globalFootholdsResult_.defaultFootholds[i][5]<<"\t,"
-            <<globalFootholdsResult_.defaultFootholds[i][6]<<"\t,"
-            <<globalFootholdsResult_.defaultFootholds[i][7]<<"\t,"
-            <<globalFootholdsResult_.defaultFootholds[i][8]<<"\t,"
-            <<globalFootholdsResult_.defaultFootholds[i][9]<<"\t,"
-            <<globalFootholdsResult_.defaultFootholds[i][10]<<"\t,"
-            <<globalFootholdsResult_.defaultFootholds[i][11]
-            <<"},"
-            <<endl;                
-        }        
-
-        outFile0.close();
-        if(debug_) cout<<"Default global footholds saved in file : "<<filePath<<endl;        
-    }
-
-
-    /* 1、传统落脚点规划算法 ------------------------------------------------------------------ */
-    // std::string filePath;
-    // std::ofstream cogSpeedFile;    
-    // std::ofstream feetDistanceFile;       
+    std::ofstream feetDistanceFile;       
     if(1)
     {
         // 1.1 全局落脚点

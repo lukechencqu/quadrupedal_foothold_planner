@@ -1,0 +1,34 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "",
+        "limitSymbolsToIncludedHeaders": true
+      },
+      "includePath": [
+        "/home/chenlu/ros2_gridmap/install/grid_map_sdf/include/**",
+        "/home/chenlu/ros2_gridmap/install/grid_map_rviz_plugin/include/**",
+        "/home/chenlu/ros2_gridmap/install/grid_map_pcl/include/**",
+        "/home/chenlu/ros2_gridmap/install/grid_map_filters/include/**",
+        "/home/chenlu/ros2_gridmap/install/grid_map_ros/include/**",
+        "/home/chenlu/ros2_gridmap/install/grid_map_octomap/include/**",
+        "/home/chenlu/ros2_gridmap/install/grid_map_msgs/include/**",
+        "/home/chenlu/ros2_gridmap/install/grid_map_cv/include/**",
+        "/home/chenlu/ros2_gridmap/install/grid_map_costmap_2d/include/**",
+        "/home/chenlu/ros2_gridmap/install/grid_map_core/include/**",
+        "/home/chenlu/ros2_mapping/install/pcl_ros/include/**",
+        "/home/chenlu/ros2_mapping/install/pcl_conversions/include/**",
+        "/home/chenlu/ros2_ws/install/rtabmap_ros/include/**",
+        "/home/chenlu/ros2_ws/install/realsense2_camera/include/**",
+        "/home/chenlu/ros2_ws/install/realsense2_camera_msgs/include/**",
+        "/home/chenlu/ros2_ws/install/apriltag_odom/include/**",
+        "/home/chenlu/ros2_ws/install/apriltag_msgs/include/**",
+        "/opt/ros/foxy/include/**",
+        "/home/chenlu/Documents/quadrupedal_foothold_planner/foothold_planner/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS"
+    }
+  ],
+  "version": 4
+}

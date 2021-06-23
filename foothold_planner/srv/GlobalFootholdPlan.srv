@@ -1,3 +1,7 @@
+geometry_msgs/Point FR_current_foothold
+geometry_msgs/Point RR_current_foothold
+geometry_msgs/Point RL_current_foothold
+geometry_msgs/Point FL_current_foothold
 uint8 gait_cycles
 ---
 foothold_planner_msgs/GlobalFootholds footholds

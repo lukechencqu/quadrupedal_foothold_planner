@@ -1,3 +1,3 @@
 geometry_msgs/Point point
 uint8 foot_id
-uint32 gait_cycle_id
+uint8 gait_cycle_id

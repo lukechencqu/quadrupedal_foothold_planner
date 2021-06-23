@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+
+<launch>
+    <!-- publish TF -->
+    <node name="map_tf" pkg="foothold_planner" type="map_tf" 
+        args = "odom false">
+    </node>
+    
+    <!-- elevation mapping -->
+    <include file="$(find elevation_mapping_demos)/launch/simple_demo.launch" />
+
+    <!-- traversability estimation -->
+    <include file="$(find traversability_estimation)/launch/traversability_estimation.launch" />
+    
+    <!-- traversability visualization-->
+    <include file="$(find traversability_estimation)/launch/visualization.launch" />
+
+</launch>
