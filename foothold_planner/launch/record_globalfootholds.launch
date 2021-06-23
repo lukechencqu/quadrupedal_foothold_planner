@@ -1,5 +1,14 @@
 
 <launch>
-    <node pkg="rosbag" type="record" name="record_globalfootholds"
-        args="-o globalfootholds.bag /foothold_planner/global_footholds" />
+    <node pkg="rosbag" type="record" name="record_globalfootholds" output="screen"
+        args="-o globalfootholds.bag 
+        /foothold_planner/global_footholds 
+        /foothold_planner/global_footholds_centroid
+        /foothold_planner/global_footholds_opt
+        /foothold_planner/global_footholds_marker
+        /foothold_planner/global_footholds_centroid_marker
+        /foothold_planner/global_footholds_opt_marker
+        /foothold_planner/initial_footholds_marker
+        /foothold_planner/centroid_feet_center_path
+        /foothold_planner/norminal_feet_center_path" />
 </launch>

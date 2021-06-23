@@ -1,17 +1,112 @@
 
 ############################## （一）常用指令 ####################################
+--------------------------------------------------
+gazebo仿真中获取点云构建台阶地图操作步骤：
+步骤（1）启动gazebo并加载laikago与台阶：
+roslaunch laikago_gazebo main.launch 
+        <arg name="world_name" value="$(find laikago_gazebo)/launch/world/normal.world"/>
+
+可以设定机器人加载后初始位置
+    <node pkg="gazebo_ros" type="spawn_model" name="urdf_spawner" respawn="false" output="screen"
+          args="-urdf -z 0.6 -model laikago_gazebo -param robot_description -unpause"/>
+
+其中世界中各模型的配置如下：
+    加载laikao站立的高台：src/laika/laikago_gazebo/launch/world/normal.world
+            <include>
+            <name>exp_stairs22</name>
+            <uri>model://exp_stairs22</uri>
+            <pose>-3 0 0 0 0 0</pose>
+            </include>    
+    修改dm435俯仰角：src/laika/laikago_description/robot/laikago_d435.urdf.xacro
+    <sensor_d435 parent="base" name="camera">
+        <!-- <origin xyz="0.3 0 0" rpy="0 0.4 0"/> -->
+        <origin xyz="0.3 0 0" rpy="0 0.3 0"/>
+    </sensor_d435>
+
+步骤（2）加载机器人控制器：
+roslaunch locomotion_planner demo.launch
+让机器人站立起来：
+stand
+
+步骤（3）构建em地图，tm地图，并保存其话题为rosbag：
+roslaunch foothold_planner mapping.launch
 保存EM地图（会同时保存融合的em和原始的em_raw）和TM地图
-rosservice call /elevation_mapping/save_map "file_path: '/home/chenlu/laikago_ws/log/em.bag'
+rosservice call /elevation_mapping/save_map "file_path: '/home/chenlu/laika_ws/log/em.bag'
 topic_name: '/elevation_map'" 
 
 rosservice call /traversability_estimation/save_traversability_map_to_bag 
-"file_path: '/home/chenlu/laikago_ws/log/tm.bag'
+"file_path: '/home/chenlu/laika_ws/log/tm.bag' 
 topic_name: '/traversability_estimation/traversability_map'" 
 
+--------------------------------------------------
+回放录制的包含了机器人状态（关机位置、odom等）、全局落脚点marker的rosbag
+(1)加载机器人模型到参数空间
+roslaunch foothold_planner load_laikago_model.launch
+###roslaunch laikago_description laikago_rviz.launch
+(2)打开默认的rviz
+rviz
+(3)回放机器人状态bag
+rosbag play x.bag
+将落脚点位置话题转换为落脚点markers和足端轨迹markders
+roslaunch yobotics_odom demo.launch
+(4)回放规划的全局落脚点bag
+rosbag play x.bag
+(5)回放TM地图bag
+rosbag play x.bag
+--------------------------------------------------
 rosbag record -O globalfootholds.bag /foothold_planner/global_footholds
+
 ############################## （二）代码版本更新说明 ####################################
+///////////////////////////////////////////////////////////
+2020-0929 V5.6(录制论文RVIZ视频版本)
+1、修复yobotics_odom包rviz显示bug：落脚点重复显示bug，cog轨迹与足端轨迹重复显示之前轨迹bug
+2、修复设置落脚点规划起始坐标bug
+///////////////////////////////////////////////////////////
+2020-0923 V5.5
+1、增加了将默认落脚点保存到本地txt文件功能
+///////////////////////////////////////////////////////////
+2020-0921 V5.4
+1、修复计算trot等腰梯形长边错误：
+    // trot行走过程：获取等腰梯形几何参数
+    // isos_.longEdge = laikagoKinematics_.lengthBase + isos_.skew; //BUG!
+    isos_.longEdge = laikagoKinematics_.lengthBase + isos_.skew*2;
+///////////////////////////////////////////////////////////
+2020-0920 V5.3
+1、增加了计算默认落脚点位置并发布其markers功能
+///////////////////////////////////////////////////////////
+2020-0920 V5.2
+1、去掉了一些不必要的屏幕显示
+2、增加了用户设定机器人站立起始点位置功能（相对于地图原点的偏移量）
+3、将单词错误norminal修改为nominal
+4、对不同算法落脚点规划结果变量名进行统一规范化修改
+5、将opt落脚点修改为圆柱体markers显示（覆盖显示问题尚待解决）
+6、修复bug：修复加载laikago模型的load_laikago_model.launch文件无法加载模型问题
+///////////////////////////////////////////////////////////
+2020-0908 V5.1
+1、优化了落脚点显示功能
+2、修复BUG：nlopt目标函数自变量从0开始
+3、修复BUG：hip间距与cog速度log变量会保存上一次结果，导致log文本中也写入了之前的结果
+4、修复BUG：子目标函数f3和f4，将欧式距离除以地图分辨率转换成曼哈顿距离
+5、增加了6个不等式约束函数
+///////////////////////////////////////////////////////////
+2020-0904 V5.0
+1、用最优化方法实现了落脚点规划，并基于NLopt库实现编码与调试。分别构建了4个子目标函数（约束）构成一个总的目标函数
 
-
+///////////////////////////////////////////////////////////
+2020-0824 V4.0.2
+1、增加了配置默认落脚点等腰梯形是右腿为底边还是左腿为底边的参数到配置文件中
+2、修复bug：根据默认落脚点等腰梯形是左腿为底边还是右腿为底边，分别计算cog速度
+///////////////////////////////////////////////////////////
+2020-0821 V4.0.1
+1、增加了用户可选的机器狗初始先迈左前腿还是右后退，后续落脚点规划会基于此选择进行相应处理
+///////////////////////////////////////////////////////////
+2020-0819 V4.0
+1、增加了基于可通行区域中心约束的落脚点规划算法，规划得到的落脚点将尽量远离台阶边缘
+2、目前，已经可以同时规划出2套全局落脚点，分别为使用基于默认落脚点和基于区域中心落脚点的规划算法
+3、增加了计算和显示足端支撑面中心3D位置及轨迹显示
+4、增加了计算每个步态周期cog线速度和对脚间距值函数，并将其计算结果分别保存到本地txt文件，便于后期分析落脚点的稳定性
+5、增加了计算trot落脚点步态参数约束条件：要求所有的落脚点都不能出现长方形、否则会出现速度为0情况导致机器狗停止运动；要求对脚间距尽量接近前后hip间距
+6、修复了一些bug
 ///////////////////////////////////////////////////////////
 2020-0802 V3.0
 1、使用天骄的工程编译通过，工程运行正常，机器人可以站起来、trot步态爬台阶（不稳），落脚点规划
